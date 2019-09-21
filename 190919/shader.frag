@@ -12,6 +12,42 @@ vec3 hex2color(int hex) {
     return vec3(r / 255.0, g / 255.0, b / 255.0);
 }
 
+// Generate random noise
+float random (vec2 st) {
+    return fract(sin(dot(st, vec2(12.9898, 78.233))) * 43758.5453123);
+}
+
+// Generate random noise in 2D
+vec2 random2(vec2 st){
+    st = vec2(
+        dot(st, vec2(127.1, 311.7)),
+        dot(st, vec2(269.5, 183.3))
+    );
+    return -1.0 + 2.0 * fract(sin(st) * 43758.5453123);
+}
+
+// Generate gradation noise
+float noise(vec2 st) {
+    vec2 i = floor(st);
+    vec2 f = fract(st);
+
+    vec2 u = f * f * (3.0 - 2.0 * f);
+
+    return mix(
+        mix(
+            dot( random2(i + vec2(0.0, 0.0)), f - vec2(0.0, 0.0) ),
+            dot( random2(i + vec2(1.0, 0.0)), f - vec2(1.0, 0.0) ),
+            u.x
+        ),
+        mix(
+            dot( random2(i + vec2(0.0, 1.0)), f - vec2(0.0, 1.0) ),
+            dot( random2(i + vec2(1.0, 1.0)), f - vec2(1.0, 1.0) ),
+            u.x
+        ),
+        u.y
+    );
+}
+
 void main(void) {
     vec2 uv = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
 	
